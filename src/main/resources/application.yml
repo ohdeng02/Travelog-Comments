@@ -1,0 +1,45 @@
+server:
+  address: localhost
+  port: 8083
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://172.16.210.130:3307/Comment
+    username: root
+    password: 1234!
+  thymeleaf:
+    cache: false
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+    open-in-view: true
+    show_sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        #default_batch_fetch_size: 50
+
+logging:
+  level:
+    org:
+      #            hibernate:
+      #                SQL: debug
+      springframework:
+        orm:
+          jpa: DEBUG
+          jpa.JpaTransactionManager: DEBUG
+
+#springdoc:
+#  swagger-ui:
+#    path: /swagger-ui/index.html
+#    operationsSorter: method
+#    tagsSorter: alpha
+
