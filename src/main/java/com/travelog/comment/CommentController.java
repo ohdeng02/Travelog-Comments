@@ -14,13 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/")
+@RequestMapping("/comments")
 public class CommentController {
     @Autowired
     private final CommentService commentService;
 
     //댓글 조회 일단 OK
-    @GetMapping(value = "{nickname}/{boardId}/comments")
+    @GetMapping(value = "/{nickname}/{boardId}")
     public ResponseEntity<?> getComments(@PathVariable String nickname, @PathVariable Long boardId){
         List<Comment> comments = commentService.getComments(boardId);
         return new ResponseEntity<>(CMRespDto.builder()
@@ -28,7 +28,7 @@ public class CommentController {
     }
 
     //댓글 작성
-    @PostMapping(value = "{nickname}/{boardId}/comments")
+    @PostMapping(value = "/{nickname}/{boardId}")
     public ResponseEntity<?> createComment(@RequestBody CommentReqDto commentReqDto,
                                            @PathVariable String nickname, @PathVariable Long boardId){ //boardId, Member 받아와야함
         Comment res = commentService.createComment(commentReqDto, boardId);
@@ -37,7 +37,7 @@ public class CommentController {
     }
 
     //댓글 삭제 일단 OK
-    @DeleteMapping(value = "{nickname}/{boardId}/{commentId}")
+    @DeleteMapping(value = "/{nickname}/{boardId}/{commentId}")
     public String deleteComment(HttpServletRequest request, @PathVariable String nickname,
                                 @PathVariable Long boardId, @PathVariable Long commentId){
         commentService.deleteComment(boardId, commentId);

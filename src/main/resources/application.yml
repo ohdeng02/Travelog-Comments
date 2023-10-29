@@ -1,8 +1,9 @@
 server:
-  address: localhost
   port: 8083
 
 spring:
+  application:
+    name: comments
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://172.16.210.130:3307/Comment
@@ -30,16 +31,27 @@ spring:
 logging:
   level:
     org:
-      #            hibernate:
-      #                SQL: debug
       springframework:
         orm:
           jpa: DEBUG
           jpa.JpaTransactionManager: DEBUG
 
-#springdoc:
-#  swagger-ui:
-#    path: /swagger-ui/index.html
-#    operationsSorter: method
-#    tagsSorter: alpha
+eureka:
+  instance:
+    #instance-id: comments-service
+    prefer-ip-address: false
+    lease-renewal-interval-in-seconds: 30
+    client:
+      register-with-eureka: true
+      fetch-registry: true
+      service-url:
+        defaultZone: http://172.16.210.130:8761/eureka/
+#      instance:
+#        hostname: localhost
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui/index.html
+    operationsSorter: method
+    tagsSorter: alpha
 
