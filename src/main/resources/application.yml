@@ -38,16 +38,14 @@ logging:
 
 eureka:
   instance:
-    #instance-id: comments-service
     prefer-ip-address: false
     lease-renewal-interval-in-seconds: 30
-    client:
-      register-with-eureka: true
-      fetch-registry: true
-      service-url:
-        defaultZone: http://172.16.210.130:8761/eureka/
-#      instance:
-#        hostname: localhost
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://172.16.210.130:8761/eureka/
+
 
 springdoc:
   swagger-ui:

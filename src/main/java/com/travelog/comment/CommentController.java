@@ -20,11 +20,16 @@ public class CommentController {
     private final CommentService commentService;
 
     //댓글 조회 일단 OK
+//    @GetMapping(value = "/{nickname}/{boardId}")
+//    public ResponseEntity<?> getComments(@PathVariable String nickname, @PathVariable Long boardId){
+//        List<Comment> comments = commentService.getComments(boardId);
+//        return new ResponseEntity<>(CMRespDto.builder()
+//                .isSuccess(true).msg("댓글 조회").body(comments).build(), HttpStatus.OK);
+//    }
     @GetMapping(value = "/{nickname}/{boardId}")
-    public ResponseEntity<?> getComments(@PathVariable String nickname, @PathVariable Long boardId){
+    public List<Comment> getComments(@PathVariable String nickname, @PathVariable Long boardId){
         List<Comment> comments = commentService.getComments(boardId);
-        return new ResponseEntity<>(CMRespDto.builder()
-                .isSuccess(true).msg("댓글 조회").body(comments).build(), HttpStatus.OK);
+        return comments;
     }
 
     //댓글 작성
