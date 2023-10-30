@@ -26,8 +26,8 @@ public class CommentController {
 //        return new ResponseEntity<>(CMRespDto.builder()
 //                .isSuccess(true).msg("댓글 조회").body(comments).build(), HttpStatus.OK);
 //    }
-    @GetMapping(value = "/{nickname}/{boardId}")
-    public List<Comment> getComments(@PathVariable String nickname, @PathVariable Long boardId){
+    @GetMapping(value = "/{boardId}")
+    public List<Comment> getComments(@PathVariable Long boardId){
         List<Comment> comments = commentService.getComments(boardId);
         return comments;
     }
