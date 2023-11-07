@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
-@CrossOrigin(origins = "http://172.16.210.130:3000")
+@CrossOrigin(origins = "http://172.16.210.131:3000")
 @RestController
 @RequestMapping("/comments")
 public class CommentController {
