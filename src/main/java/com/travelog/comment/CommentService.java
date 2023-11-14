@@ -1,6 +1,7 @@
 package com.travelog.comment;
 
 import com.travelog.comment.dto.CommentReqDto;
+import com.travelog.comment.dto.CommentResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class CommentService {
         return commentRepository.findAllByBoardId(boardId);
     }
 
-    public Comment createComment(CommentReqDto commentReqDto, Long boardId){
+    public CommentResDto createComment(CommentReqDto commentReqDto, Long boardId){
         Comment comment = Comment.builder()
                 .boardId(boardId)
                 .nickname(commentReqDto.getNickname())
@@ -29,7 +30,8 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
-        return comment;
+        CommentResDto commentResDto = new CommentResDto(comment);
+        return commentResDto;
     }
 
     public void deleteComment(Long boardId, Long commentId){
