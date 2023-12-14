@@ -61,7 +61,7 @@ public class CommentController {
     @PutMapping(value = "/{nickname}/{boardId}/{commentId}")
     public ResponseEntity<?> updateComment(@RequestBody CommentReqDto commentReqDto, @PathVariable String nickname,
                                            @PathVariable Long boardId, @PathVariable Long commentId){
-        Comment comment = commentService.updateComment(commentReqDto, boardId, commentId);
+        CommentResDto comment = commentService.updateComment(commentReqDto, boardId, commentId);
         return new ResponseEntity<>(CMRespDto.builder().isSuccess(true).msg("수정 완료")
                 .body(comment).build(), HttpStatus.OK);
     }

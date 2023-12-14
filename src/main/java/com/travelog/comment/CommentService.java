@@ -36,11 +36,11 @@ public class CommentService {
         return commentResDto;
     }
     @Transactional
-    public Comment updateComment(CommentReqDto commentReqDto, Long boardId, Long commentId){
+    public CommentResDto updateComment(CommentReqDto commentReqDto, Long boardId, Long commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(()->new NoSuchElementException("해당 댓글이 존재하지 않습니다."));
         comment.updateComment(commentReqDto);
-        return comment;
+        return new CommentResDto(comment);
     }
 
     @Transactional(readOnly = true)
