@@ -5,6 +5,7 @@ import com.travelog.comment.dto.CMRespDto;
 import com.travelog.comment.dto.CommentReqDto;
 import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
+import com.travelog.comment.dto.CommentResDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class CommentController {
     @PostMapping(value = "/{nickname}/{boardId}")
     public ResponseEntity<?> createComment(@RequestBody CommentReqDto commentReqDto,
                                            @PathVariable String nickname, @PathVariable Long boardId){ //boardId, Member 받아와야함
-        Comment comment = commentService.createComment(commentReqDto, boardId);
+        CommentResDto comment = commentService.createComment(commentReqDto, boardId);
         int commentSize = commentService.getComments(boardId).size();
         BoardReqDto boardReqDto = new BoardReqDto(boardId, commentSize);
         try{
@@ -51,7 +52,7 @@ public class CommentController {
             log.error("error {}", ": " + e.getMessage());
         }
         return new ResponseEntity<>(CMRespDto.builder().isSuccess(true).msg("댓글 저장 완료")
-                .body(comment.getId()).build(), HttpStatus.OK);
+                .body(comment).build(), HttpStatus.OK);
     }
 
     @Operation(summary = "댓글 삭제")
@@ -74,6 +75,4 @@ public class CommentController {
         }
         return "redirect:" + referer;
     }
-
-    //댓글 수정
 }
