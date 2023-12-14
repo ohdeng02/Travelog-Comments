@@ -4,6 +4,7 @@ import com.travelog.comment.dto.BoardReqDto;
 import com.travelog.comment.dto.CMRespDto;
 import com.travelog.comment.dto.CommentReqDto;
 import feign.FeignException;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@CrossOrigin(origins = "http://172.16.210.131:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/comments")
@@ -29,12 +29,14 @@ public class CommentController {
 //        return new ResponseEntity<>(CMRespDto.builder()
 //                .isSuccess(true).msg("댓글 조회").body(comments).build(), HttpStatus.OK);
 //    }
+    @Operation(summary = "특정 게시글의 댓글 전체 조회")
     @GetMapping(value = "/{boardId}")
     public List<Comment> getComments(@PathVariable Long boardId){
         List<Comment> comments = commentService.getComments(boardId);
         return comments;
     }
 
+    @Operation(summary = "댓글 작성")
     //댓글 작성
     @PostMapping(value = "/{nickname}/{boardId}")
     public ResponseEntity<?> createComment(@RequestBody CommentReqDto commentReqDto,
@@ -52,11 +54,20 @@ public class CommentController {
                 .body(comment.getId()).build(), HttpStatus.OK);
     }
 
+    @Operation(summary = "댓글 삭제")
     //댓글 삭제 일단 OK
     @DeleteMapping(value = "/{nickname}/{boardId}/{commentId}")
     public String deleteComment(HttpServletRequest request, @PathVariable String nickname,
                                 @PathVariable Long boardId, @PathVariable Long commentId){
         commentService.deleteComment(boardId, commentId);
+        int commentSize = commentService.getComments(boardId).size();
+        BoardReqDto boardReqDto = new BoardReqDto(boardId, commentSize);
+        try{
+            commentSize = boardServiceFeignClient.updateCommentSize(boardReqDto);
+            log.info("info {}", ": " + commentSize);
+        } catch (FeignException e){
+            log.error("error {}", ": " + e.getMessage());
+        }
         String referer = request.getHeader("Referer");
         if(referer == null){
             referer = "/" + nickname;
