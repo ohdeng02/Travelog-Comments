@@ -4,9 +4,11 @@ import com.travelog.comment.dto.BoardReqDto;
 import com.travelog.comment.dto.CMRespDto;
 import com.travelog.comment.dto.CommentReqDto;
 import feign.FeignException;
+import feign.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import com.travelog.comment.dto.CommentResDto;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -55,6 +57,15 @@ public class CommentController {
                 .body(comment).build(), HttpStatus.OK);
     }
 
+    @Operation(summary = "댓글 수정")
+    @PutMapping(value = "/{nickname}/{boardId}/{commentId}")
+    public ResponseEntity<?> updateComment(@RequestBody CommentReqDto commentReqDto, @PathVariable String nickname,
+                                           @PathVariable Long boardId, @PathVariable Long commentId){
+        Comment comment = commentService.updateComment(commentReqDto, boardId, commentId);
+        return new ResponseEntity<>(CMRespDto.builder().isSuccess(true).msg("수정 완료")
+                .body(comment).build(), HttpStatus.OK);
+    }
+
     @Operation(summary = "댓글 삭제")
     //댓글 삭제 일단 OK
     @DeleteMapping(value = "/{nickname}/{boardId}/{commentId}")
@@ -75,4 +86,5 @@ public class CommentController {
         }
         return "redirect:" + referer;
     }
+
 }
