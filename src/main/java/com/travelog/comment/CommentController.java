@@ -1,20 +1,16 @@
 package com.travelog.comment;
 
-import com.travelog.comment.dto.BoardReqDto;
-import com.travelog.comment.dto.CMRespDto;
-import com.travelog.comment.dto.CommentReqDto;
+import com.travelog.comment.dto.*;
 import feign.FeignException;
-import feign.Response;
 import io.swagger.v3.oas.annotations.Operation;
-import com.travelog.comment.dto.CommentResDto;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -24,32 +20,43 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
     private final BoardServiceFeignClient boardServiceFeignClient;
+    private final MemberServiceFeignClient memberServiceFeignClient;
 
-    //댓글 조회 일단 OK
-//    @GetMapping(value = "/{nickname}/{boardId}")
-//    public ResponseEntity<?> getComments(@PathVariable String nickname, @PathVariable Long boardId){
-//        List<Comment> comments = commentService.getComments(boardId);
-//        return new ResponseEntity<>(CMRespDto.builder()
-//                .isSuccess(true).msg("댓글 조회").body(comments).build(), HttpStatus.OK);
-//    }
     @Operation(summary = "특정 게시글의 댓글 전체 조회")
     @GetMapping(value = "/{boardId}")
-    public List<Comment> getComments(@PathVariable Long boardId){
+    public List<CommentListDto> getComments(@PathVariable Long boardId){
         List<Comment> comments = commentService.getComments(boardId);
-        return comments;
+        List<Long> membersId = comments.stream().map(Comment::getMemberId).toList();
+        List<MemberInfoDto> memberInfos = new ArrayList<>();
+        List<CommentListDto> commentRes = new ArrayList<>();
+
+        try {
+            memberInfos = memberServiceFeignClient.getMemberInfo(membersId);
+            log.info("info={}" , memberInfos);
+        } catch (FeignException e){
+            log.error("error={}", e.getMessage());
+        }
+        for(Comment comment: comments){
+            MemberInfoDto member = memberInfos.stream()
+                    .filter(o->o.getMemberId().equals(comment.getMemberId())).findFirst()
+                    .orElseGet(()->new MemberInfoDto(null, "존재하지 않은 회원입니다.", null));
+            CommentListDto c = new CommentListDto(comment, member);
+            log.info("info={}", c);
+            commentRes.add(c);
+        }
+        return commentRes;
     }
 
     @Operation(summary = "댓글 작성")
     //댓글 작성
-    @PostMapping(value = "/{nickname}/{boardId}")
+    @PostMapping(value = "/{boardId}")
     public ResponseEntity<?> createComment(@RequestBody CommentReqDto commentReqDto,
-                                           @PathVariable String nickname, @PathVariable Long boardId){ //boardId, Member 받아와야함
+                                           @PathVariable Long boardId){ //boardId, Member 받아와야함
         CommentResDto comment = commentService.createComment(commentReqDto, boardId);
         int commentSize = commentService.getComments(boardId).size();
         BoardReqDto boardReqDto = new BoardReqDto(boardId, commentSize);
         try{
-            commentSize = boardServiceFeignClient.updateCommentSize(boardReqDto);
-            log.info("info {}", ": " + commentSize);
+            boardServiceFeignClient.updateCommentSize(boardReqDto);
         } catch (FeignException e){
             log.error("error {}", ": " + e.getMessage());
         }
@@ -58,8 +65,8 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정")
-    @PutMapping(value = "/{nickname}/{boardId}/{commentId}")
-    public ResponseEntity<?> updateComment(@RequestBody CommentReqDto commentReqDto, @PathVariable String nickname,
+    @PutMapping(value = "/{boardId}/{commentId}")
+    public ResponseEntity<?> updateComment(@RequestBody CommentReqDto commentReqDto,
                                            @PathVariable Long boardId, @PathVariable Long commentId){
         CommentResDto comment = commentService.updateComment(commentReqDto, boardId, commentId);
         return new ResponseEntity<>(CMRespDto.builder().isSuccess(true).msg("수정 완료")
@@ -68,23 +75,16 @@ public class CommentController {
 
     @Operation(summary = "댓글 삭제")
     //댓글 삭제 일단 OK
-    @DeleteMapping(value = "/{nickname}/{boardId}/{commentId}")
-    public String deleteComment(HttpServletRequest request, @PathVariable String nickname,
-                                @PathVariable Long boardId, @PathVariable Long commentId){
+    @DeleteMapping(value = "/{boardId}/{commentId}")
+    public void deleteComment(@PathVariable Long boardId, @PathVariable Long commentId){
         commentService.deleteComment(boardId, commentId);
         int commentSize = commentService.getComments(boardId).size();
         BoardReqDto boardReqDto = new BoardReqDto(boardId, commentSize);
         try{
             commentSize = boardServiceFeignClient.updateCommentSize(boardReqDto);
-            log.info("info {}", ": " + commentSize);
         } catch (FeignException e){
             log.error("error {}", ": " + e.getMessage());
         }
-        String referer = request.getHeader("Referer");
-        if(referer == null){
-            referer = "/" + nickname;
-        }
-        return "redirect:" + referer;
     }
 
 }

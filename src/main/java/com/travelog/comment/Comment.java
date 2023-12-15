@@ -29,6 +29,8 @@ public class Comment{
     @Column(nullable = false)
     private Long boardId;
     @Column(nullable = false)
+    private Long memberId;
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)
@@ -45,8 +47,9 @@ public class Comment{
     private boolean status; //default 1
 
     @Builder
-    public Comment(Long boardId, String nickname, String content, boolean status) {
+    public Comment(Long boardId, Long memberId, String nickname, String content, boolean status) {
         this.boardId = boardId;
+        this.memberId = memberId;
         this.nickname = nickname;
         this.content = content;
         this.status = status;

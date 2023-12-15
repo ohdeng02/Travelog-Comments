@@ -26,14 +26,14 @@ public class CommentService {
     public CommentResDto createComment(CommentReqDto commentReqDto, Long boardId){
         Comment comment = Comment.builder()
                 .boardId(boardId)
+                .memberId(commentReqDto.getMemberId())
                 .nickname(commentReqDto.getNickname())
                 .content(commentReqDto.getContent())
                 .status(commentReqDto.isStatus())
                 .build();
 
         commentRepository.save(comment);
-        CommentResDto commentResDto = new CommentResDto(comment);
-        return commentResDto;
+        return new CommentResDto(comment);
     }
     @Transactional
     public CommentResDto updateComment(CommentReqDto commentReqDto, Long boardId, Long commentId){
