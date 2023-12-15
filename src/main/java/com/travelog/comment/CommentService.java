@@ -17,6 +17,12 @@ public class CommentService {
     @Autowired
     private final CommentRepository commentRepository;
 
+    // 댓글 개수
+    @Transactional(readOnly = true)
+    public int countCommentSize(Long boardId){
+        return commentRepository.findIdByBoardId(boardId).size();
+    }
+
     @Transactional(readOnly = true)
     public List<Comment> getComments(Long boardId){
         return commentRepository.findAllByBoardId(boardId);

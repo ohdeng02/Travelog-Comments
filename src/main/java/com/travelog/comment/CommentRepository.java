@@ -13,4 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query(value = "delete from comment where board_id=:boardId and comment_id=:commentId", nativeQuery = true)
     void deleteByBoardIdAndCommentId(@Param("boardId") Long boardId, @Param("commentId") Long commentId);
+
+    @Query(value = "select c.id from Comment c where boardId = :boardId")
+    List<Long> findIdByBoardId(Long boardId);
 }

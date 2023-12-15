@@ -53,7 +53,7 @@ public class CommentController {
     public ResponseEntity<?> createComment(@RequestBody CommentReqDto commentReqDto,
                                            @PathVariable Long boardId){ //boardId, Member 받아와야함
         CommentResDto comment = commentService.createComment(commentReqDto, boardId);
-        int commentSize = commentService.getComments(boardId).size();
+        int commentSize = commentService.countCommentSize(boardId);
         BoardReqDto boardReqDto = new BoardReqDto(boardId, commentSize);
         try{
             boardServiceFeignClient.updateCommentSize(boardReqDto);
@@ -76,9 +76,10 @@ public class CommentController {
     @Operation(summary = "댓글 삭제")
     //댓글 삭제 일단 OK
     @DeleteMapping(value = "/{boardId}/{commentId}")
-    public void deleteComment(@PathVariable Long boardId, @PathVariable Long commentId){
+    public void deleteComment(HttpServletRequest request,
+                                @PathVariable Long boardId, @PathVariable Long commentId){
         commentService.deleteComment(boardId, commentId);
-        int commentSize = commentService.getComments(boardId).size();
+        int commentSize = commentService.countCommentSize(boardId);
         BoardReqDto boardReqDto = new BoardReqDto(boardId, commentSize);
         try{
             commentSize = boardServiceFeignClient.updateCommentSize(boardReqDto);

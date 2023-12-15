@@ -15,6 +15,7 @@ public class CommentListDto {
     private String pfp;
     private String content;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private int report;
     private boolean status;
 
@@ -26,6 +27,7 @@ public class CommentListDto {
         this.pfp = member.getPfp();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
+        this.updatedAt = comment.getUpdatedAt();
         this.report = comment.getReport();
         this.status = comment.isStatus();
     }
