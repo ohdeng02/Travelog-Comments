@@ -16,6 +16,8 @@ spring:
       enabled: true
     livereload:
       enabled: true
+  profiles.include:
+    - elastic
 
   jpa:
     database-platform: org.hibernate.dialect.MariaDB103Dialect

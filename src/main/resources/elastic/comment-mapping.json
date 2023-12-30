@@ -1,0 +1,45 @@
+{
+    "properties": {
+      "board_id": {
+        "type": "long"
+      },
+      "comment_id": {
+        "type": "long"
+      },
+      "content": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "member_id": {
+        "type": "long"
+      },
+      "nickname": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "report": {
+        "type": "integer",
+        "null_value": 0
+      },
+      "status": {
+        "type": "short",
+        "null_value": 1
+      },
+      "updated_at": {
+        "type": "date"
+      }
+    }
+}

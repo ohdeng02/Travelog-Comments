@@ -1,5 +1,6 @@
 package com.travelog.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.travelog.comment.dto.*;
 import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/comments")
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class CommentController {
     private final CommentService commentService;
     private final BoardServiceFeignClient boardServiceFeignClient;
@@ -24,9 +27,9 @@ public class CommentController {
 
     @Operation(summary = "특정 게시글의 댓글 전체 조회")
     @GetMapping(value = "/{boardId}")
-    public List<CommentListDto> getComments(@PathVariable Long boardId){
-        List<Comment> comments = commentService.getComments(boardId);
-        List<Long> membersId = comments.stream().map(Comment::getMemberId).toList();
+    public List<CommentListDto> getComments(@PathVariable Long boardId) throws IOException {
+        List<CommentDocumentResDto> comments = commentService.getComments(boardId);
+        List<Long> membersId = comments.stream().map(CommentDocumentResDto::getMemberId).toList();
         List<MemberInfoDto> memberInfos = new ArrayList<>();
         List<CommentListDto> commentRes = new ArrayList<>();
 
@@ -36,7 +39,7 @@ public class CommentController {
         } catch (FeignException e){
             log.error("error={}", e.getMessage());
         }
-        for(Comment comment: comments){
+        for(CommentDocumentResDto comment: comments){
             MemberInfoDto member = memberInfos.stream()
                     .filter(o->o.getMemberId().equals(comment.getMemberId())).findFirst()
                     .orElseGet(()->new MemberInfoDto(null, "존재하지 않은 회원입니다.", null));

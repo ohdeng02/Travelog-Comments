@@ -1,4 +1,4 @@
-package com.travelog.comment;
+package com.travelog.comment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

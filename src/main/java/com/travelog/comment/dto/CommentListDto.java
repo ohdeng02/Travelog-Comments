@@ -1,7 +1,6 @@
 package com.travelog.comment.dto;
 
 import com.travelog.comment.Comment;
-import com.travelog.comment.MemberInfoDto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,13 +13,13 @@ public class CommentListDto {
     private String nickname;
     private String pfp;
     private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private int report;
     private boolean status;
 
-    public CommentListDto(Comment comment, MemberInfoDto member){
-        this.id = comment.getId();
+    public CommentListDto(CommentDocumentResDto comment, MemberInfoDto member){
+        this.id = comment.getCommentId();
         this.boardId = comment.getBoardId();
         this.memberId = comment.getMemberId();
         this.nickname = member.getNickName();
