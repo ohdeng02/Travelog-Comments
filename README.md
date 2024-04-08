@@ -1,3 +1,3 @@
 ## Travelog-Comments
 
-- msa아키텍처 기반 서비스
+- Travelog 블로그 서비스의 댓글 서비스
